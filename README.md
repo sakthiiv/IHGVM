@@ -1,7 +1,7 @@
 IHGVM
 ============
 
-WPF based Activity detection tool
+Identifying Imminent Human Gesture through Visual Data Mining - WPF based Activity detection tool
 
 
 #### Features Implemented
