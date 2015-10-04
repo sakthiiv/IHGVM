@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IHGVM", "IHGVM\IHGVM.csproj", "{7F85648A-732D-4D6D-94D1-9902C3E3637A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IHGVM_VideoManeuver", "IHGVM_VideoManeuver\IHGVM_VideoManeuver.csproj", "{379FCF80-C8F0-4787-A5B5-4767B6F4FC85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IHGVM_VideoSplitter", "IHGVM_VideoSplitter\IHGVM_VideoSplitter.csproj", "{86932B5C-76D6-4201-ACCB-631DF0E1EBF5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F85648A-732D-4D6D-94D1-9902C3E3637A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F85648A-732D-4D6D-94D1-9902C3E3637A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F85648A-732D-4D6D-94D1-9902C3E3637A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F85648A-732D-4D6D-94D1-9902C3E3637A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{379FCF80-C8F0-4787-A5B5-4767B6F4FC85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{379FCF80-C8F0-4787-A5B5-4767B6F4FC85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{379FCF80-C8F0-4787-A5B5-4767B6F4FC85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{379FCF80-C8F0-4787-A5B5-4767B6F4FC85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86932B5C-76D6-4201-ACCB-631DF0E1EBF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86932B5C-76D6-4201-ACCB-631DF0E1EBF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86932B5C-76D6-4201-ACCB-631DF0E1EBF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86932B5C-76D6-4201-ACCB-631DF0E1EBF5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
