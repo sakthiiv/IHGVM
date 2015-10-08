@@ -31,9 +31,7 @@ namespace IHGVM_VideoSplitter
             int height = imageData.Height;
 
             Bitmap dstImage = CreateGrayscaleImage(width, height);
-
-            BitmapData dstData = dstImage.LockBits(new Rectangle(0, 0, width, height), 
-                ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+            BitmapData dstData = dstImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
             try
             {
@@ -52,9 +50,7 @@ namespace IHGVM_VideoSplitter
 
         public void ApplyTowardsImage(Bitmap image, Bitmap tmpImage)
         {
-            BitmapData data = image.LockBits(
-                new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadWrite, image.PixelFormat);
+            BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, image.PixelFormat);
             try
             {
                 ProcessFilterTowards(new BitmapCustomImage(data), tmpImage);
@@ -84,14 +80,10 @@ namespace IHGVM_VideoSplitter
         }
 
         protected unsafe void ProcessFilter(BitmapCustomImage image)
-        {
-            PixelFormat pixelFormat = image.PixelFormat;
-            int width = image.Width;
-            int height = image.Height;
-
+        {            
             if (referenceImage != null)
             {
-                BitmapData ovrData = referenceImage.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, pixelFormat);
+                BitmapData ovrData = referenceImage.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
                 try
                 {
                     ProcessFilter(image, new BitmapCustomImage(ovrData));
@@ -105,25 +97,21 @@ namespace IHGVM_VideoSplitter
 
         protected unsafe void ProcessFilter(BitmapCustomImage image, BitmapCustomImage overlay)
         {
-            PixelFormat pixelFormat = image.PixelFormat;
             int width = image.Width;
             int height = image.Height;
             int v;
 
-            if ((pixelFormat == PixelFormat.Format8bppIndexed) || (pixelFormat == PixelFormat.Format24bppRgb))
+            if ((image.PixelFormat == PixelFormat.Format8bppIndexed))
             {
-                int pixelSize = (pixelFormat == PixelFormat.Format8bppIndexed) ? 1 :
-                    (pixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
-                int lineSize = width * pixelSize;
-                int srcOffset = image.Stride - lineSize;
-                int ovrOffset = overlay.Stride - lineSize;
+                int srcOffset = image.Stride - width;
+                int ovrOffset = overlay.Stride - width;
 
                 byte* ptr = (byte*)image.ImageData.ToPointer();
                 byte* ovr = (byte*)overlay.ImageData.ToPointer();
 
                 for (int y = 0; y < height; y++)
                 {
-                    for (int x = 0; x < lineSize; x++, ptr++, ovr++)
+                    for (int x = 0; x < width; x++, ptr++, ovr++)
                     {
                         v = (int)*ptr - (int)*ovr;
                         *ptr = (v < 0) ? (byte)-v : (byte)v;
@@ -150,9 +138,7 @@ namespace IHGVM_VideoSplitter
                 for (int y = startY; y < stopY; y++)
                 {
                     for (int x = startX; x < stopX; x++, ptr++)
-                    {
                         *ptr = (byte)((*ptr >= threshold) ? 255 : 0);
-                    }
                     ptr += offset;
                 }
             }
@@ -164,11 +150,8 @@ namespace IHGVM_VideoSplitter
                 for (int y = startY; y < stopY; y++)
                 {
                     ushort* ptr = (ushort*)(basePtr + stride * y);
-
                     for (int x = startX; x < stopX; x++, ptr++)
-                    {
                         *ptr = (ushort)((*ptr >= threshold) ? 65535 : 0);
-                    }
                 }
             }
         }
@@ -184,32 +167,28 @@ namespace IHGVM_VideoSplitter
                 try
                 {
                     PixelFormat pixelFormat = image.PixelFormat;
+                    int width = image.Width;
                     int height = image.Height;
                     int v;
 
-                    if ((pixelFormat == PixelFormat.Format8bppIndexed) || (pixelFormat == PixelFormat.Format24bppRgb))
+                    if ((pixelFormat == PixelFormat.Format8bppIndexed))
                     {
-                        int pixelSize = (pixelFormat == PixelFormat.Format8bppIndexed) ? 1 :
-                            (pixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
-                        int lineSize = image.Width * pixelSize;
-                        int srcOffset = image.Stride - lineSize;
-                        int ovrOffset = tmplay.Stride - lineSize;
+                        int srcOffset = image.Stride - width;
+                        int ovrOffset = tmplay.Stride - width;
 
                         byte* ptr = (byte*)image.ImageData.ToPointer();
                         byte* ovr = (byte*)tmplay.ImageData.ToPointer();
 
                         for (int y = 0; y < height; y++)
                         {
-                            for (int x = 0; x < lineSize; x++, ptr++, ovr++)
+                            for (int x = 0; x < width; x++, ptr++, ovr++)
                             {
                                 v = (int)*ovr - *ptr;
                                 if (v > 0)
-                                {
                                     *ptr += (byte)((stepSize < v) ? stepSize : v);
-                                }
                                 else if (v < 0)
                                 {
-                                    v = -v;
+                                    v = -v; 
                                     *ptr -= (byte)((stepSize < v) ? stepSize : v);
                                 }
                             }
@@ -269,6 +248,7 @@ namespace IHGVM_VideoSplitter
         private OpeningDilute dilatation = new OpeningDilute();
         public Generate60s generateBW = new Generate60s(); 
         public int pixelCount = 0;
+        public static int Size = 3;
 
         public OpeningFilter()
         {
@@ -342,9 +322,7 @@ namespace IHGVM_VideoSplitter
         {
             Bitmap tempImage = this.ApplyOpeningEroded(imageData);
             Bitmap destImage = this.ApplyOpeningDilute(tempImage);
-
             tempImage.Dispose();
-
             return destImage;
         }
 
@@ -353,9 +331,6 @@ namespace IHGVM_VideoSplitter
 
     public class OpeningEroded
     {
-        private short[,] se = new short[3, 3] { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
-        private int size = 3;
-
         public OpeningEroded() { }
 
         public unsafe void OpeningErodedProcessing(BitmapCustomImage sourceData, BitmapCustomImage destinationData, Rectangle rect)
@@ -366,56 +341,47 @@ namespace IHGVM_VideoSplitter
             int startY = rect.Top;
             int stopX = startX + rect.Width;
             int stopY = startY + rect.Height;
-            int r = size >> 1;
-            bool foundSomething;
+            int r = OpeningFilter.Size >> 1;
+            bool isFound;
 
-            if ((pixelFormat == PixelFormat.Format8bppIndexed) || (pixelFormat == PixelFormat.Format24bppRgb))
+            if (pixelFormat == PixelFormat.Format8bppIndexed)
             {
-                int pixelSize = (pixelFormat == PixelFormat.Format8bppIndexed) ? 1 : 3;
                 int dstStride = destinationData.Stride;
                 int srcStride = sourceData.Stride;
 
                 byte* baseSrc = (byte*)sourceData.ImageData.ToPointer();
                 byte* baseDst = (byte*)destinationData.ImageData.ToPointer();
 
-                baseSrc += (startX * pixelSize);
-                baseDst += (startX * pixelSize);
 
-                if (pixelFormat == PixelFormat.Format8bppIndexed)
+                for (int y = startY; y < stopY; y++)
                 {
-                    for (int y = startY; y < stopY; y++)
+                    byte* src = baseSrc + y * srcStride;
+                    byte* dst = baseDst + y * dstStride;
+                    byte min, v;
+                    int t, ir, jr, i, j;
+
+                    for (int x = startX; x < stopX; x++, src++, dst++)
                     {
-                        byte* src = baseSrc + y * srcStride;
-                        byte* dst = baseDst + y * dstStride;
-                        byte min, v;
-                        int t, ir, jr, i, j;
-
-                        for (int x = startX; x < stopX; x++, src++, dst++)
+                        min = 255; isFound = false;
+                        for (i = 0; i < OpeningFilter.Size; i++)
                         {
-                            min = 255; foundSomething = false;
-                            for (i = 0; i < size; i++)
-                            {
-                                ir = i - r; t = y + ir;
+                            ir = i - r; t = y + ir;
 
-                                if (t < startY) continue;
-                                if (t >= stopY) break;
-                                for (j = 0; j < size; j++)
+                            if (t < startY) continue;
+                            if (t >= stopY) break;
+                            for (j = 0; j < OpeningFilter.Size; j++)
+                            {
+                                jr = j - r; t = x + jr;
+                                if (t < startX) continue;
+                                if (t < stopX)
                                 {
-                                    jr = j - r; t = x + jr;
-                                    if (t < startX) continue;
-                                    if (t < stopX)
-                                    {
-                                        if (se[i, j] == 1)
-                                        {
-                                            foundSomething = true;
-                                            v = src[ir * srcStride + jr];
-                                            if (v < min) min = v;
-                                        }
-                                    }
+                                    isFound = true;
+                                    v = src[ir * srcStride + jr];
+                                    if (v < min) min = v;
                                 }
                             }
-                            *dst = (foundSomething) ? min : *src;
                         }
+                        *dst = (isFound) ? min : *src;
                     }
                 }
             }
@@ -424,8 +390,6 @@ namespace IHGVM_VideoSplitter
 
     public class OpeningDilute
     {
-        private short[,] se = new short[3, 3] { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
-        private int size = 3;
         private int pixelCount = 0;
 
         public int PixelCount { get { return pixelCount; } }
@@ -441,10 +405,10 @@ namespace IHGVM_VideoSplitter
             int stopY = startY + rect.Height;
             pixelCount = 0;
 
-            int r = size >> 1;
-            bool foundSomething;
+            int r = OpeningFilter.Size >> 1;
+            bool isFound;
 
-            if ((pixelFormat == PixelFormat.Format8bppIndexed) || (pixelFormat == PixelFormat.Format24bppRgb))
+            if (pixelFormat == PixelFormat.Format8bppIndexed)
             {
                 int pixelSize = (pixelFormat == PixelFormat.Format8bppIndexed) ? 1 : 3;
                 int srcStride = sourceData.Stride;
@@ -452,51 +416,43 @@ namespace IHGVM_VideoSplitter
                 byte* baseSrc = (byte*)sourceData.ImageData.ToPointer();
                 byte* baseDst = (byte*)destinationData.ImageData.ToPointer();
 
-                baseSrc += (startX * pixelSize);
-                baseDst += (startX * pixelSize);
 
-                if (pixelFormat == PixelFormat.Format8bppIndexed)
+                for (int y = startY; y < stopY; y++)
                 {
-                    for (int y = startY; y < stopY; y++)
+                    byte* src = baseSrc + y * srcStride;
+                    byte* dst = baseDst + y * destinationData.Stride;
+                    byte max, v;
+                    int t, ir, jr, i, j;
+
+                    for (int x = startX; x < stopX; x++, src++, dst++)
                     {
-                        byte* src = baseSrc + y * srcStride;
-                        byte* dst = baseDst + y * destinationData.Stride;
-                        byte max, v;
-                        int t, ir, jr, i, j;
-
-                        for (int x = startX; x < stopX; x++, src++, dst++)
+                        max = 0; isFound = false;
+                        for (i = 0; i < OpeningFilter.Size; i++)
                         {
-                            max = 0; foundSomething = false;
-                            for (i = 0; i < size; i++)
+                            ir = i - r; t = y + ir;
+
+                            if (t < startY) continue;
+                            if (t >= stopY) break;
+
+                            for (j = 0; j < OpeningFilter.Size; j++)
                             {
-                                ir = i - r; t = y + ir;
+                                jr = j - r; t = x + jr;
 
-                                if (t < startY) continue;
-                                if (t >= stopY) break;
-
-                                for (j = 0; j < size; j++)
+                                if (t < startX) continue;
+                                if (t < stopX)
                                 {
-                                    jr = j - r; t = x + jr;
-
-                                    if (t < startX) continue;
-                                    if (t < stopX)
-                                    {
-                                        if (se[i, j] == 1)
-                                        {
-                                            foundSomething = true;
-                                            v = src[ir * srcStride + jr];                                            
-                                            if (v > max) max = v;
-                                            if (v == 255) pixelCount++;
-                                        }
-                                    }
+                                    isFound = true;
+                                    v = src[ir * srcStride + jr];
+                                    if (v > max) max = v;
+                                    if (v == 255) pixelCount++;
                                 }
                             }
-                            *dst = (foundSomething) ? max : *src;
                         }
+                        *dst = (isFound) ? max : *src;
                     }
                 }
             }
-            
+
         }
     }
 
