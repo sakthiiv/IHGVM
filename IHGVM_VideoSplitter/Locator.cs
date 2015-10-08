@@ -14,7 +14,7 @@ namespace IHGVM_VideoSplitter
     {
         public Bitmap silhouetteFrame;
         private BitmapData bitmapData;
-        private int counter = 0;
+        private int frameGroup = 0;
         
         private int width;
         private int height;
@@ -36,12 +36,12 @@ namespace IHGVM_VideoSplitter
             get { return (double)pixelsChanged / (width * height); }
         }
 
-        public void ProcessFrame(ref Bitmap image, int framePosition)
+        public void LocateEachFrame(ref Bitmap image, int framePosition)
         {
             Graphics g;
-            string path = @"..\BitMaps\";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            //string path = @"..\BitMaps\";
+            //if (!Directory.Exists(path))
+            //    Directory.CreateDirectory(path);
 
             Bitmap tmpImage;
             tmpImage = of.generateBW.Apply(image);
@@ -54,9 +54,9 @@ namespace IHGVM_VideoSplitter
                 return;
             }
 
-            if (++counter == 2)
+            if (++frameGroup == 2)
             {
-                counter = 0;
+                frameGroup = 0;
                 cs.ApplyTowardsImage(silhouetteFrame, tmpImage);
             }
 
