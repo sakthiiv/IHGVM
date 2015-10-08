@@ -132,7 +132,7 @@ namespace IHGVM
                 while (true)
                 {
                     Bitmap bmp = frameReader.GetNextFrame();
-                    locator.ProcessFrame(ref bmp, frameReader.FramePosition);
+                    locator.LocateEachFrame(ref bmp, frameReader.FramePosition);
                     //this.SaveFile(bmp);
                     bmp.Dispose();
 
