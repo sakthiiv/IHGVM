@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Collections.Generic;
 
 namespace IHGVM_VideoManeuver
