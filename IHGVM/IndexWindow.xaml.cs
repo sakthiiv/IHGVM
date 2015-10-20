@@ -37,10 +37,9 @@ namespace IHGVM
 
         OpenFileDialog openFileDialog;
         ProcessFrame processFrame;
+        FrameWriter frameWriter;
         FrameReader frameReader = new FrameReader();
         Locator locator = new Locator();
-
-        Activity activityToSave;
 
         #region Constants
 
@@ -115,8 +114,7 @@ namespace IHGVM
                         break;
                 }
 
-                tempActivities = processFrame.ActivityFetching();
-                //tempActivities = new List<Activity>() { new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 }, new Activity() { StartTime = 0.0, EndTime = 0.0, FrameNumber = 2 } };
+                tempActivities = processFrame.ActivityFetching();                
                 Dispatcher.BeginInvoke(new Action(delegate() 
                 {
                     lblProcessedFrames.Content = "Processed Frames: " + processFrame.FrameLength;
@@ -129,7 +127,7 @@ namespace IHGVM
                     ProgresserToggle();
                 }));
 
-                frameReader.Dispose();
+                //frameReader.Dispose();
 
             }
             catch (Exception ex)
@@ -194,6 +192,7 @@ namespace IHGVM
             if (openFileDialog != null)
             {
                 processFrame = new ProcessFrame(openFileDialog.FileName, frameReader, locator);
+                frameWriter = new FrameWriter(processFrame);
                 this.Start();
             }
         }
@@ -203,28 +202,20 @@ namespace IHGVM
             this.Reset();
         }
 
-        private void ActivityTimeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-                activityToSave = (Activity)e.AddedItems[0];
-        }
-
         private void btnSaveActivity_Click(object sender, RoutedEventArgs e)
         {
-            if (activityToSave == null)
+            if (ActivityTimeList.SelectedIndex < 0)
                 MessageBox.Show(INDEX_CONSTANTS.SAVE_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
             else
-            {
-                //Write specific logics
-            }
+                frameWriter.SaveActivity(ActivityTimeList.SelectedIndex);
         }
 
         private void btnSaveActivities_Click(object sender, RoutedEventArgs e)
         {
             if (ActivityTimeList.Items.Count == 0)
-            {
                 MessageBox.Show(INDEX_CONSTANTS.SAVEALL_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
-            }
+            else
+                frameWriter.SaveActivity();
         }
 
         #endregion

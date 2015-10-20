@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Cloakers.cs" />
     <Compile Include="FrameReader.cs" />
+    <Compile Include="FrameWriter.cs" />
     <Compile Include="ProcessFrame.cs" />
     <Compile Include="Locator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
