@@ -40,38 +40,11 @@ namespace IHGVM
         FrameReader frameReader = new FrameReader();
         Locator locator = new Locator();
 
+        Activity activityToSave;
 
         #region Constants
 
         #endregion
-
-        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
-        {
-            this.Reset();
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = INDEX_CONSTANTS.FILE_FILTERS;
-
-            //String path = INDEX_CONSTANTS.STRING_PATH;
-            if (openFileDialog.ShowDialog() == true && openFileDialog.FileName != null)
-            {
-                txtFileName.Text = openFileDialog.FileName;                
-            }
-        }
-
-        private void btnProcess_Click(object sender, RoutedEventArgs e)
-        {
-            if (openFileDialog != null)
-            {
-                processFrame = new ProcessFrame(openFileDialog.FileName, frameReader, locator);                
-                this.Start();
-            }
-        }
-
-        private void btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            this.Reset();
-        }
-
         private void Reset()
         {
             openFileDialog = null;
@@ -156,6 +129,8 @@ namespace IHGVM
                     ProgresserToggle();
                 }));
 
+                frameReader.Dispose();
+
             }
             catch (Exception ex)
             {
@@ -198,5 +173,62 @@ namespace IHGVM
                 frameThread.Abort();
             }
         }
+
+        #region Events
+
+        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            this.Reset();
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = INDEX_CONSTANTS.FILE_FILTERS;
+
+            //String path = INDEX_CONSTANTS.STRING_PATH;
+            if (openFileDialog.ShowDialog() == true && openFileDialog.FileName != null)
+            {
+                txtFileName.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void btnProcess_Click(object sender, RoutedEventArgs e)
+        {
+            if (openFileDialog != null)
+            {
+                processFrame = new ProcessFrame(openFileDialog.FileName, frameReader, locator);
+                this.Start();
+            }
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            this.Reset();
+        }
+
+        private void ActivityTimeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+                activityToSave = (Activity)e.AddedItems[0];
+        }
+
+        private void btnSaveActivity_Click(object sender, RoutedEventArgs e)
+        {
+            if (activityToSave == null)
+                MessageBox.Show(INDEX_CONSTANTS.SAVE_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
+            else
+            {
+                //Write specific logics
+            }
+        }
+
+        private void btnSaveActivities_Click(object sender, RoutedEventArgs e)
+        {
+            if (ActivityTimeList.Items.Count == 0)
+            {
+                MessageBox.Show(INDEX_CONSTANTS.SAVEALL_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
+            }
+        }
+
+        #endregion
+
+
     }
 }
