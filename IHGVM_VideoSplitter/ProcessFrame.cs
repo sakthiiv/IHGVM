@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
+using IO = System.IO;
 
 namespace IHGVM_VideoSplitter
 {
@@ -11,8 +11,10 @@ namespace IHGVM_VideoSplitter
 
         private FrameReader frameReader;
         private Locator locator;
-        private string source = "";
+        private string source = string.Empty;
+        private string fileName = string.Empty;
         public List<Activity> activityList = new List<Activity>();
+        public List<Activity> clearedList;
 
         public int FrameLength
         {
@@ -46,22 +48,26 @@ namespace IHGVM_VideoSplitter
                 {
                     return frameReader.VideoStrech.Codec;
                 }
-                return "";
+                return string.Empty;
             }
         }
 
+        public string FileName { get { return fileName; } }
         public string Source { get { return source; } }
+        public FrameReader FrameReader { get { return frameReader; } }
+
 
         public ProcessFrame(string fileSource, FrameReader frameReader, Locator locator)
         {
             this.source = fileSource;
             this.frameReader = frameReader;
             this.locator = locator;
+            this.fileName = IO.Path.GetFileNameWithoutExtension(fileSource);
         }
 
         public List<Activity> ActivityFetching()
         {
-            bool activity = false;            
+            bool activity = false;
             activityList.Clear();
             if (locator != null)
             {
@@ -94,8 +100,8 @@ namespace IHGVM_VideoSplitter
         {
 
             string path = @"..\BitMaps\";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            if (!IO.Directory.Exists(path))
+                IO.Directory.CreateDirectory(path);
 
             Graphics g = Graphics.FromImage(test);
             g.DrawImage(test, 0, 0);
@@ -104,13 +110,14 @@ namespace IHGVM_VideoSplitter
             test.Save(path + this.frameReader.FramePosition + "_Percent_" + 0 + ".bmp", ImageFormat.Bmp);
         }
 
-        public List<Activity> ClearSecondsVariation(List<Activity> activityList) 
+        public List<Activity> ClearSecondsVariation(List<Activity> activityList)
         {
-            List<Activity> clearedList = new List<Activity>();
+            clearedList = new List<Activity>();
             try
-            {                
+            {
                 int row = 0, differenceTh = 3;
-                if (activityList.Count == 1) {
+                if (activityList.Count == 1)
+                {
                     clearedList.Add(new Activity() { StartTime = activityList[0].StartTime, EndTime = activityList[0].EndTime, FrameNumber = activityList[0].FrameNumber });
                 }
                 for (int i = 1; i < activityList.Count; i++)
@@ -121,13 +128,13 @@ namespace IHGVM_VideoSplitter
                     {
                         if (((activityList[i].StartTime - clearedList[row].EndTime) <= differenceTh))
                         {
-                            clearedList[row].EndTime = activityList[i].EndTime;                            
+                            clearedList[row].EndTime = activityList[i].EndTime;
                         }
                         else
                         {
                             clearedList.Add(new Activity() { StartTime = activityList[i].StartTime, EndTime = activityList[i].EndTime, FrameNumber = activityList[i].FrameNumber });
                             row++;
-                        }                        
+                        }
                     }
                 }
             }
@@ -138,7 +145,7 @@ namespace IHGVM_VideoSplitter
 
             return clearedList;
         }
-  
+
     }
 
     public class Activity
@@ -149,6 +156,6 @@ namespace IHGVM_VideoSplitter
 
         public double StartTime { get { return startTime; } set { startTime = value; } }
         public double EndTime { get { return endTime; } set { endTime = value; } }
-        public int FrameNumber { get { return frameNumber; } set { frameNumber = value; } }        
+        public int FrameNumber { get { return frameNumber; } set { frameNumber = value; } }
     }
 }
