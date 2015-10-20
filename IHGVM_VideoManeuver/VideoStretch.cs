@@ -10,23 +10,14 @@ namespace IHGVM_VideoManeuver
     {
         protected int aviFile;
         protected IntPtr aviStream;
-        protected IntPtr compressedStream;
-        protected bool writeCompressed;
 
         internal int FilePointer { get { return aviFile; } }
         internal virtual IntPtr StreamPointer { get { return aviStream; } }
-        internal bool WriteCompressed { get { return writeCompressed; } }
 
         public virtual void Close()
         {
-            if (writeCompressed)
-            {
-                Avi32.AVIStreamRelease(compressedStream);
-            }
             Avi32.AVIStreamRelease(StreamPointer);
         }
-
-        public abstract void ExportStream(String fileName);
     }
 
     public class VideoStrech : AviStrech
@@ -166,16 +157,6 @@ namespace IHGVM_VideoManeuver
                 Avi32.AVIStreamGetFrameClose(getFrameObject);
                 getFrameObject = 0;
             }
-        }
-
-        public bool CompareBitmaps(Bitmap leftBitmap, Bitmap rightBitmap)
-        {
-            return false;
-        }
-
-        public override void ExportStream(String fileName)
-        {
-
         }
 
     }
