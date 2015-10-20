@@ -177,7 +177,7 @@
                                             </Grid>
                                         </DockPanel>
                                         <Grid x:Name="LayoutRoot" Grid.Row="1" Grid.Column="1">
-                                            <ListView Name="ActivityTimeList" SelectionChanged="ActivityTimeList_SelectionChanged" SelectionMode="Single">
+                                            <ListView Name="ActivityTimeList" SelectionMode="Single">
                                                 <ListView.ItemContainerStyle>
                                                     <Style TargetType="{x:Type ListViewItem}">
                                                         <Setter Property="Height" Value="24" />
