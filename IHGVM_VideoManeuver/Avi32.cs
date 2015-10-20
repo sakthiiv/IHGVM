@@ -132,8 +132,20 @@ namespace IHGVM_VideoManeuver
         [DllImport("avifil32.dll")]
         public static extern int AVIStreamRelease(IntPtr aviStream);
 
+        [DllImport("avifil32.dll")]
+        public static extern int AVIStreamSetFormat(IntPtr aviStream, Int32 lPos, ref BITMAPINFOHEADER lpFormat, Int32 cbFormat);
+
+        [DllImport("avifil32.dll")]
+        public static extern int AVIFileCreateStream(int pfile, out IntPtr ppavi, ref AVISTREAMINFO ptr_streaminfo);
+
+        [DllImport("avifil32.dll")]
+        public static extern int AVIStreamWrite(IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1, Int32 dummy2);
+
         [DllImport("ntdll.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int memcpy(int dst, int src, int count);
+
+        [DllImport("winmm.dll", EntryPoint = "mmioStringToFOURCCA")]
+        public static extern int mmioStringToFOURCC(String sz, int uFlags);
 
         #endregion
 
