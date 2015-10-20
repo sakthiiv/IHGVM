@@ -41,8 +41,6 @@ namespace IHGVM
         FrameReader frameReader = new FrameReader();
         Locator locator = new Locator();
 
-        Activity activityToSave;
-
         #region Constants
 
         #endregion
