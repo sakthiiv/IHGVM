@@ -177,7 +177,7 @@
                                             </Grid>
                                         </DockPanel>
                                         <Grid x:Name="LayoutRoot" Grid.Row="1" Grid.Column="1">
-                                            <ListView Name="ActivityTimeList">
+                                            <ListView Name="ActivityTimeList" SelectionChanged="ActivityTimeList_SelectionChanged" SelectionMode="Single">
                                                 <ListView.ItemContainerStyle>
                                                     <Style TargetType="{x:Type ListViewItem}">
                                                         <Setter Property="Height" Value="24" />
@@ -230,8 +230,8 @@
                 <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="0,20,40,0">
                     <Button Name="btnProcess" Padding="5" Margin="3" Click="btnProcess_Click">Process Video</Button>
                     <Button Name="btnReset" Padding="5" Margin="3" Click="btnReset_Click">Reset</Button>
-                    <Button Name="btnSaveActivities" Padding="5" Margin="3">Save All Activities</Button>
-                    <Button Name="btnSaveActivity" Padding="5" Margin="3">Save Activity</Button>
+                    <Button Name="btnSaveActivities" Padding="5" Margin="3" Click="btnSaveActivities_Click">Save All Activities</Button>
+                    <Button Name="btnSaveActivity" Padding="5" Margin="3" Click="btnSaveActivity_Click">Save Activity</Button>
                 </WrapPanel>
             </Grid>
         </DockPanel>
