@@ -62,7 +62,7 @@
                     <RowDefinition />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <Label Name="lblProgress" HorizontalAlignment="Left"  Margin="50, 0, 0, 0" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0">Frame Extraction in Progress ... Please wait ...</Label>
+                <Label Name="lblProgress" HorizontalAlignment="Left"  Margin="50, 0, 0, 0" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"></Label>
                 <Label Name="lblProcessedFrames" HorizontalAlignment="Right" Margin="0, 0, 35, 0"  Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0"></Label>
                 <ProgressBar Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="100" Name="pbFrameStatus" />
             </Grid>
@@ -148,7 +148,7 @@
                                                 <Label Grid.Column="0" Grid.Row="2">Set Threshold</Label>
                                                 <Label Grid.Column="1" Grid.Row="2" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">
-                                                    <TextBox Name="txtThreshold" IsEnabled="False" Width="80"></TextBox>
+                                                    <TextBox Name="txtThreshold" Width="80"></TextBox>
                                                 </WrapPanel>
                                                 <Label Grid.Column="0" Grid.Row="4">
                                                     <TextBlock TextWrapping="WrapWithOverflow">
@@ -157,7 +157,7 @@
                                                 </Label>
                                                 <Label Grid.Column="1" Grid.Row="4" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="4" VerticalAlignment="Center">
-                                                    <TextBox Name="txtPercentage" IsEnabled="False" Width="80"></TextBox>
+                                                    <TextBox Name="txtPercentage" Width="80"></TextBox>
                                                 </WrapPanel>
                                                 <Label Grid.Column="0" Grid.Row="6">
                                                     <TextBlock TextWrapping="WrapWithOverflow" ToolTip="Used to identify the number of pixel variation between bitmaps">
@@ -166,7 +166,7 @@
                                                 </Label>
                                                 <Label Grid.Column="1" Grid.Row="6" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="6" VerticalAlignment="Center">
-                                                    <TextBox Name="txtPixels" IsEnabled="False" Width="80"></TextBox>
+                                                    <TextBox Name="txtPixels" Width="80"></TextBox>
                                                 </WrapPanel>
                                                 <Label Name="lblFrameLength" HorizontalAlignment="Left" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="8">
                                                 </Label>
@@ -230,7 +230,7 @@
                 <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="0,20,40,0">
                     <Button Name="btnProcess" Padding="5" Margin="3" Click="btnProcess_Click">Process Video</Button>
                     <Button Name="btnReset" Padding="5" Margin="3" Click="btnReset_Click">Reset</Button>
-                    <Button Name="btnSaveActivities" Padding="5" Margin="3" Click="btnSaveActivities_Click">Save All Activities</Button>
+                    <Button Name="btnSaveActivities" Padding="5" Margin="3" Click="btnSaveActivity_Click">Save All Activities</Button>
                     <Button Name="btnSaveActivity" Padding="5" Margin="3" Click="btnSaveActivity_Click">Save Activity</Button>
                 </WrapPanel>
             </Grid>
