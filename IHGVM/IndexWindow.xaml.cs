@@ -41,20 +41,8 @@ namespace IHGVM
         FrameReader frameReader = new FrameReader();
         Locator locator = new Locator();
 
-        #region Constants
-
-        #endregion
-        private void Reset()
-        {
-            openFileDialog = null;
-            txtFileName.Text = "";
-            lblFrameLength.Content = "";
-            lblFrameRate.Content = "";
-            lblCodec.Content = "";
-            ActivityTimeList.Items.Clear(); 
-        }
-
         private Thread frameThread = null;
+        private Thread frameSavingThread = null;
         public bool Running
         {
             get
@@ -69,9 +57,28 @@ namespace IHGVM
             }
         }
 
+        public bool SaveRunning
+        {
+            get
+            {
+                if (frameSavingThread != null)
+                {
+                    if (frameSavingThread.Join(0) == false)
+                        return true;
+                    SaveFree();
+                }
+                return false;
+            }
+        }
+
         private void Free()
         {
             frameThread = null;
+        }
+
+        private void SaveFree()
+        {
+            frameSavingThread = null;
         }
 
         public void Start()
@@ -79,10 +86,24 @@ namespace IHGVM
             if (frameThread == null)
             {
                 ProgresserToggle();
+                ProgressSwitcher(true);
 
                 frameThread = new Thread(() => WorkerThread());
                 frameThread.Name = processFrame.Source;
                 frameThread.Start();
+            }
+        }
+
+        public void SaveStart()
+        {
+            if (frameSavingThread == null)
+            {
+                ProgresserToggle();
+                ProgressSwitcher(false);
+
+                frameSavingThread = new Thread(() => SaveWorkerThread());
+                frameSavingThread.Name = processFrame.Source + INDEX_CONSTANTS.STATE_SAVE_THREAD;
+                frameSavingThread.Start();
             }
         }
 
@@ -138,6 +159,35 @@ namespace IHGVM
             this.Free();
         }
 
+        public void SaveWorkerThread()
+        {
+            try
+            {
+                int activityIndex = -1;
+                Dispatcher.BeginInvoke(new Action(delegate()
+                {
+                    activityIndex = ActivityTimeList.SelectedIndex;
+                }));
+
+                Thread.Sleep(100);
+                if (activityIndex >= 0)
+                    frameWriter.SaveActivity(activityIndex);
+                else
+                    frameWriter.SaveActivity();
+
+                Dispatcher.BeginInvoke(new Action(delegate()
+                {
+                    ActivityTimeList.SelectedIndex = -1;
+                    ProgresserToggle();
+                }));
+            }
+            catch (Exception ex)
+            {
+ 
+            }
+            this.SaveFree();
+        }
+
         public void FrameCountDispatcher()
         {
             int forEvery = 100;
@@ -154,14 +204,31 @@ namespace IHGVM
         {
             switch (grdProgresser.Visibility)
             {
-                case Visibility.Hidden:
+                case Visibility.Hidden:                   
                     grdProgresser.Visibility = Visibility.Visible;
                     break;
                 case Visibility.Visible:
+                    lblProcessedFrames.Visibility = Visibility.Hidden;
                     grdProgresser.Visibility = Visibility.Hidden;
                     break;
             }
+            ToggleDisabled(grdProgresser.Visibility == Visibility.Hidden);
 
+        }
+
+        public void ProgressSwitcher(bool isFrame)
+        {
+            pbFrameStatus.IsIndeterminate = !isFrame;
+            if (isFrame)
+            {
+                lblProgress.Content = INDEX_CONSTANTS.FRAME_EXTRACTION;
+                lblProcessedFrames.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                lblProgress.Content = INDEX_CONSTANTS.ACTIVITY_SAVING;
+                lblProcessedFrames.Visibility = Visibility.Hidden;
+            }
         }
 
         public void Stop()
@@ -172,7 +239,37 @@ namespace IHGVM
             }
         }
 
-        #region Events
+        public void SaveStop()
+        {
+            if (this.SaveRunning)
+            {
+                frameSavingThread.Abort();
+            }
+        }
+
+        #region Events & Common Functions
+
+        private void ToggleDisabled(bool enabled)
+        {
+            btnOpenFile.IsEnabled = enabled;
+            btnProcess.IsEnabled = enabled;
+            btnReset.IsEnabled = enabled;
+            btnSaveActivity.IsEnabled = enabled;
+            btnSaveActivities.IsEnabled = enabled;
+            txtThreshold.IsEnabled = enabled;
+            txtPercentage.IsEnabled = enabled;
+            txtPixels.IsEnabled = enabled;
+        }
+
+        private void Reset()
+        {
+            openFileDialog = null;
+            txtFileName.Text = "";
+            lblFrameLength.Content = "";
+            lblFrameRate.Content = "";
+            lblCodec.Content = "";
+            ActivityTimeList.Items.Clear();
+        }
 
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
@@ -207,15 +304,7 @@ namespace IHGVM
             if (ActivityTimeList.SelectedIndex < 0)
                 MessageBox.Show(INDEX_CONSTANTS.SAVE_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
             else
-                frameWriter.SaveActivity(ActivityTimeList.SelectedIndex);
-        }
-
-        private void btnSaveActivities_Click(object sender, RoutedEventArgs e)
-        {
-            if (ActivityTimeList.Items.Count == 0)
-                MessageBox.Show(INDEX_CONSTANTS.SAVEALL_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
-            else
-                frameWriter.SaveActivity();
+                this.SaveStart();
         }
 
         #endregion
