@@ -13,6 +13,9 @@ namespace IHGVM_VideoManeuver
         public const string APPLICATION_CAPTION = "IHGVM";
         public const string SAVEALL_ERROR = "No new videos processed. Please choose a video to process.";
         public const string SAVE_ERROR = "Please choose an activity to save.";
+        public const string STATE_SAVE_THREAD = "StateSave";
+        public const string FRAME_EXTRACTION = "Frame Extraction in Progress ... Please wait ...";
+        public const string ACTIVITY_SAVING = "Activity Saving in Progress ... Please wait ...";
     }
 
     public class AVI32_CONSTANTS
