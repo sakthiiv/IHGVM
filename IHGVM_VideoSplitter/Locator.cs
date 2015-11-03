@@ -33,9 +33,9 @@ namespace IHGVM_VideoSplitter
             get { return (double)pixelsChanged / (width * height); }
         }
 
-        public void LocateEachFrame(ref Bitmap image, int framePosition)
+        public void LocateEachFrame(ref Bitmap image, int framePosition, ref Bitmap openingFilter)
         {
-            Graphics g;
+            //Graphics g;
             //string path = @"..\BitMaps\";
             //if (!Directory.Exists(path))
             //    Directory.CreateDirectory(path);
@@ -63,9 +63,9 @@ namespace IHGVM_VideoSplitter
             cs.ApplyDifference(bitmapData);
             cs.ApplyThreshold(bitmapData);
 
-            of.Apply(bitmapData);
+            openingFilter = of.Apply(bitmapData);
             pixelsList.Add(of.pixelCount);
-
+            
             //Bitmap tmpImage2 = of.Apply(bitmapData);
             //g = Graphics.FromImage(new Bitmap(tmpImage2.Width, tmpImage2.Height));
             //g.DrawImage(tmpImage2, 0, 0);
