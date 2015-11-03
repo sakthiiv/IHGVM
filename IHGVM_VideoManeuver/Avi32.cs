@@ -147,6 +147,9 @@ namespace IHGVM_VideoManeuver
         [DllImport("winmm.dll", EntryPoint = "mmioStringToFOURCCA")]
         public static extern int mmioStringToFOURCC(String sz, int uFlags);
 
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
         #endregion
 
     }

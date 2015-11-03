@@ -19,6 +19,8 @@ using IHGVM_VideoSplitter;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Interop;
 
 namespace IHGVM
 {
@@ -112,23 +114,57 @@ namespace IHGVM
             List<Activity> tempActivities;
             try
             {
+                bool isPreviewFrame = false;
                 frameReader.Read(processFrame.Source);
-                Dispatcher.BeginInvoke(new Action(delegate() 
+                Dispatcher.Invoke(new Action(delegate() 
                 {
                     pbFrameStatus.Maximum = processFrame.FrameLength;
                     lblFrameLength.Content = INDEX_CONSTANTS.LABLE_FRAME_LENGTH + (processFrame.FrameLength);
                     lblFrameRate.Content = INDEX_CONSTANTS.LABLE_FRAME_RATE + processFrame.FrameRate;
                     lblCodec.Content = INDEX_CONSTANTS.LABLE_CODEC + processFrame.Codec;
+                    isPreviewFrame = chkFramePreview.IsChecked ?? false;
+
+                    frameImg.Width = frameReader.VideoStrech.Width;
+                    frameImg.Height = frameReader.VideoStrech.Height;
+                    openingFrameImg.Width = frameReader.VideoStrech.Width;
+                    openingFrameImg.Height = frameReader.VideoStrech.Height;
                 }));
 
                 locator.silhouetteFrame = null;
                 while (true)
                 {
-                    Bitmap bmp = frameReader.GetNextFrame();
-                    locator.LocateEachFrame(ref bmp, frameReader.FramePosition);
-                    //this.SaveFile(bmp);
-                    bmp.Dispose();
+                    Bitmap bmp = frameReader.GetNextFrame(); Bitmap filter = new Bitmap(bmp.Width, bmp.Height);
+                    locator.LocateEachFrame(ref bmp, frameReader.FramePosition, ref filter);
 
+                    if (isPreviewFrame)
+                    {
+                        Dispatcher.Invoke(new Action(delegate()
+                        {
+                            IntPtr fBitmap = bmp.GetHbitmap();
+                            IntPtr oBitmap = filter.GetHbitmap();
+                            try
+                            {
+                                BitmapSource b = Imaging.CreateBitmapSourceFromHBitmap(fBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(bmp.Width, bmp.Height));
+                                frameImg.Source = b;
+                                b = Imaging.CreateBitmapSourceFromHBitmap(oBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(bmp.Width, bmp.Height));
+                                openingFrameImg.Source = b;
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                            finally
+                            {
+                                //Free up Memory Explicitly
+                                Avi32.DeleteObject(fBitmap);
+                                Avi32.DeleteObject(oBitmap);
+                            }
+
+                        }));
+                    }
+
+                    bmp.Dispose();
+                    filter.Dispose();
                     FrameCountDispatcher();
 
                     if ((frameReader.FramePosition + 1) >= frameReader.VideoStrech.Length)
@@ -259,6 +295,7 @@ namespace IHGVM
             txtThreshold.IsEnabled = enabled;
             txtPercentage.IsEnabled = enabled;
             txtPixels.IsEnabled = enabled;
+            chkFramePreview.IsEnabled = enabled;
         }
 
         private void Reset()
