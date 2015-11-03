@@ -230,7 +230,7 @@
                 <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="0,20,40,0">
                     <Button Name="btnProcess" Padding="5" Margin="3" Click="btnProcess_Click">Process Video</Button>
                     <Button Name="btnReset" Padding="5" Margin="3" Click="btnReset_Click">Reset</Button>
-                    <Button Name="btnSaveActivities" Padding="5" Margin="3" Click="btnSaveActivity_Click">Save All Activities</Button>
+                    <Button Name="btnSaveActivities" Padding="5" Margin="3" Click="btnSaveActivities_Click">Save All Activities</Button>
                     <Button Name="btnSaveActivity" Padding="5" Margin="3" Click="btnSaveActivity_Click">Save Activity</Button>
                 </WrapPanel>
             </Grid>
