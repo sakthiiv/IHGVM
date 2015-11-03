@@ -94,14 +94,14 @@ namespace IHGVM
             }
         }
 
-        public void SaveStart()
+        public void SaveStart(bool all)
         {
             if (frameSavingThread == null)
             {
                 ProgresserToggle();
                 ProgressSwitcher(false);
 
-                frameSavingThread = new Thread(() => SaveWorkerThread());
+                frameSavingThread = new Thread(() => SaveWorkerThread(all));
                 frameSavingThread.Name = processFrame.Source + INDEX_CONSTANTS.STATE_SAVE_THREAD;
                 frameSavingThread.Start();
             }
@@ -159,7 +159,7 @@ namespace IHGVM
             this.Free();
         }
 
-        public void SaveWorkerThread()
+        public void SaveWorkerThread(bool all)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace IHGVM
                 }));
 
                 Thread.Sleep(100);
-                if (activityIndex >= 0)
+                if (!all && activityIndex >= 0)
                     frameWriter.SaveActivity(activityIndex);
                 else
                     frameWriter.SaveActivity();
@@ -304,7 +304,15 @@ namespace IHGVM
             if (ActivityTimeList.SelectedIndex < 0)
                 MessageBox.Show(INDEX_CONSTANTS.SAVE_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
             else
-                this.SaveStart();
+                this.SaveStart(false);
+        }
+
+        private void btnSaveActivities_Click(object sender, RoutedEventArgs e)
+        {
+            if (ActivityTimeList.Items.Count == 0)
+                MessageBox.Show(INDEX_CONSTANTS.SAVEALL_ERROR, INDEX_CONSTANTS.APPLICATION_CAPTION, MessageBoxButton.OK);
+            else
+                this.SaveStart(true);
         }
 
         #endregion
