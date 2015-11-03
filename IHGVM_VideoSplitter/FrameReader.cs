@@ -46,7 +46,6 @@ namespace IHGVM_VideoSplitter
 
         public Bitmap GetNextFrame()
         {
-
             Bitmap bitmap = videoManeuver.videoStretch.GetSubsequentPosition(FramePosition);
             FramePosition++;
             return bitmap;
