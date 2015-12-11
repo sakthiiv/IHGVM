@@ -169,7 +169,9 @@ namespace IHGVM_VideoSplitter
 
         public InputSettings(int t, int per, int p)
         {
-
+            this.threshold = t;
+            this.percentage = per;
+            this.pixel = p;
         }
 
         public int Threshold { get { return threshold; } }
