@@ -8,9 +8,9 @@ namespace IHGVM_VideoSplitter
 {
     public class ProcessFrame
     {
-
         private FrameReader frameReader;
         private Locator locator;
+        private InputSettings inSet;
         private string source = string.Empty;
         private string fileName = string.Empty;
         public List<Activity> activityList = new List<Activity>();
@@ -57,12 +57,13 @@ namespace IHGVM_VideoSplitter
         public FrameReader FrameReader { get { return frameReader; } }
 
 
-        public ProcessFrame(string fileSource, FrameReader frameReader, Locator locator)
+        public ProcessFrame(string fileSource, FrameReader frameReader, Locator locator, InputSettings inSet)
         {
             this.source = fileSource;
             this.frameReader = frameReader;
             this.locator = locator;
             this.fileName = IO.Path.GetFileNameWithoutExtension(fileSource);
+            this.inSet = inSet;
         }
 
         public List<Activity> ActivityFetching()
@@ -73,7 +74,7 @@ namespace IHGVM_VideoSplitter
             {
                 for (int i = 0; i < locator.pixelsList.Count; i++)
                 {
-                    if (locator.pixelsList[i] > 500)
+                    if (locator.pixelsList[i] > inSet.Pixel)
                     {
                         if (!activity)
                         {
@@ -82,7 +83,7 @@ namespace IHGVM_VideoSplitter
                             activity = !activity;
                         }
                     }
-                    if (locator.pixelsList[i] < 500 || (locator.pixelsList.Count == (i + 1)))
+                    if (locator.pixelsList[i] < inSet.Pixel || (locator.pixelsList.Count == (i + 1)))
                     {
                         if (activity && activityList.Count > 0)
                         {
@@ -115,7 +116,7 @@ namespace IHGVM_VideoSplitter
             clearedList = new List<Activity>();
             try
             {
-                int row = 0, differenceTh = 3;
+                int row = 0, differenceTh = inSet.Threshold;
                 if (activityList.Count == 1)
                 {
                     clearedList.Add(new Activity() { StartTime = activityList[0].StartTime, EndTime = activityList[0].EndTime, FrameNumber = activityList[0].FrameNumber });
@@ -157,5 +158,22 @@ namespace IHGVM_VideoSplitter
         public double StartTime { get { return startTime; } set { startTime = value; } }
         public double EndTime { get { return endTime; } set { endTime = value; } }
         public int FrameNumber { get { return frameNumber; } set { frameNumber = value; } }
+    }
+
+    public class InputSettings
+    {
+
+        private int threshold = 0;
+        private int percentage = 0;
+        private int pixel = 0;
+
+        public InputSettings(int t, int per, int p)
+        {
+
+        }
+
+        public int Threshold { get { return threshold; } }
+        public int Percentage { get { return percentage; } }
+        public int Pixel { get { return pixel; } }
     }
 }

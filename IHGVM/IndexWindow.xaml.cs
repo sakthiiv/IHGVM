@@ -21,6 +21,7 @@ using System.Threading;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Interop;
+using System.Text.RegularExpressions;
 
 namespace IHGVM
 {
@@ -308,6 +309,22 @@ namespace IHGVM
             ActivityTimeList.Items.Clear();
         }
 
+        private InputSettings GenerateInputSettings()
+        {
+            int percentage = txtPercentage.Text.Length == 0 ? 0 : Convert.ToInt32(txtPercentage.Text);
+            int threshold = txtThreshold.Text.Length == 0 ? 3 : Convert.ToInt32(txtThreshold.Text);
+            int pixel = txtPixels.Text.Length == 0 ? 500 : Convert.ToInt32(txtPixels.Text);
+
+            InputSettings inSet = new InputSettings(threshold, percentage, pixel);
+            return inSet;
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
             this.Reset();
@@ -325,7 +342,7 @@ namespace IHGVM
         {
             if (openFileDialog != null)
             {
-                processFrame = new ProcessFrame(openFileDialog.FileName, frameReader, locator);
+                processFrame = new ProcessFrame(openFileDialog.FileName, frameReader, locator, GenerateInputSettings());
                 frameWriter = new FrameWriter(processFrame);
                 this.Start();
             }

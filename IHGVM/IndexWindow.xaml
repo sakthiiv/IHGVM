@@ -145,10 +145,10 @@
                                                     <TextBox Name="txtFileName" Width="190" Grid.Column="2" ></TextBox>
                                                     <Button Name="btnOpenFile" Padding="2,2,2,2" Margin="5,0,0,0" Click="btnOpenFile_Click">browse</Button>
                                                 </WrapPanel>
-                                                <Label Grid.Column="0" Grid.Row="2">Set Threshold</Label>
+                                                <Label Grid.Column="0" Grid.Row="2">Set Threshold Time</Label>
                                                 <Label Grid.Column="1" Grid.Row="2" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">
-                                                    <TextBox Name="txtThreshold" Width="80"></TextBox>
+                                                    <TextBox Name="txtThreshold" Width="80" PreviewTextInput="NumberValidationTextBox"></TextBox>
                                                 </WrapPanel>
                                                 <Label Grid.Column="0" Grid.Row="4">
                                                     <TextBlock TextWrapping="WrapWithOverflow">
@@ -157,7 +157,7 @@
                                                 </Label>
                                                 <Label Grid.Column="1" Grid.Row="4" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="4" VerticalAlignment="Center">
-                                                    <TextBox Name="txtPercentage" Width="80"></TextBox>
+                                                    <TextBox Name="txtPercentage" Width="80" PreviewTextInput="NumberValidationTextBox"></TextBox>
                                                 </WrapPanel>
                                                 <Label Grid.Column="0" Grid.Row="6">
                                                     <TextBlock TextWrapping="WrapWithOverflow" ToolTip="Used to identify the number of pixel variation between bitmaps">
@@ -166,7 +166,7 @@
                                                 </Label>
                                                 <Label Grid.Column="1" Grid.Row="6" VerticalAlignment="Center">:</Label>
                                                 <WrapPanel Grid.Column="2" Grid.Row="6" VerticalAlignment="Center">
-                                                    <TextBox Name="txtPixels" Width="80"></TextBox>
+                                                    <TextBox Name="txtPixels" Width="80" PreviewTextInput="NumberValidationTextBox"></TextBox>
                                                 </WrapPanel>
                                                 <Label Name="lblFrameLength" HorizontalAlignment="Left" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="8">
                                                 </Label>
@@ -214,7 +214,7 @@
                         </DockPanel>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Clustering"></TabItem>
+                <!--<TabItem Header="Clustering"></TabItem>-->
                 <TabItem Header="AVI Preview">
                     <Grid Background="White">
                         <Grid.RowDefinitions>
