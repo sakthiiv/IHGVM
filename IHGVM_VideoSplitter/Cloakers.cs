@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -65,11 +65,11 @@ namespace IHGVM_VideoSplitter
         public static Bitmap CreateGrayscaleImage(int width, int height)
         {
             Bitmap image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
-            SetGrayscalePalette(image);
+            SetGSPalette(image);
             return image;
         }
 
-        public static void SetGrayscalePalette(Bitmap image)
+        public static void SetGSPalette(Bitmap image)
         {
             ColorPalette cp = image.Palette;
             for (int i = 0; i < 256; i++)
@@ -462,9 +462,9 @@ namespace IHGVM_VideoSplitter
 
     public class Generate60s
     {
-        public double cr = 0.2125;
-        public double cg = 0.7154;
-        public double cb = 0.0721;
+        public double coeffr = 0.2125;
+        public double coeffg = 0.7154;
+        public double coeffb = 0.0721;
 
         public Bitmap Apply(Bitmap image)
         {
@@ -507,15 +507,15 @@ namespace IHGVM_VideoSplitter
             int height = sourceData.Height;
             PixelFormat srcPixelFormat = sourceData.PixelFormat;
 
-            if ((srcPixelFormat == PixelFormat.Format24bppRgb) || (srcPixelFormat == PixelFormat.Format32bppRgb) || (srcPixelFormat == PixelFormat.Format32bppArgb))
+            if ((srcPixelFormat == PixelFormat.Format24bppRgb))
             {
                 int pixelSize = (srcPixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                 int srcOffset = sourceData.Stride - width * pixelSize;
                 int dstOffset = destinationData.Stride - width;
 
-                int rc = (int)(0x10000 * cr);
-                int gc = (int)(0x10000 * cg);
-                int bc = (int)(0x10000 * cb);
+                int rc = (int)(0x10000 * coeffr);
+                int gc = (int)(0x10000 * coeffg);
+                int bc = (int)(0x10000 * coeffb);
 
                 while (rc + gc + bc < 0x10000)
                 {
